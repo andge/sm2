@@ -1,0 +1,343 @@
+/**
+  * @author andgexiong
+  * @date 2014-12-22
+  * @version 0.0.1
+*/
+$sm2-screen-sm : 320px !default;
+$sm2-screen-md : 375px !default;
+$sm2-screen-lg : 640px !default;
+/**
+  * if child more than count
+  * @param {String} $childTag 子元素的标识。是css 的选择器
+  * @param {Number} $count 子元素的个数阈值
+  */
+@mixin child-more-than($childTag,$count){
+    #{$childTag}:first-child:nth-last-child(n+ #{$count+1}),
+    #{$childTag}:nth-last-child(n+ #{$count+1}) ~#{$childTag}{
+        @content;
+    }
+}
+
+/**
+  * if child equal count
+  * @param {String} $childTag 子元素的标识。是css 的选择器
+  * @param {Number} $count 子元素的个数
+  */
+@mixin child-equal($childTag,$count){
+    #{$childTag}:first-child:nth-last-child(#{$count}),
+    #{$childTag}:first-child:nth-last-child(#{$count}) ~ #{$childTag}{
+        @content;
+    }
+}
+/**
+  * text overflow
+*/
+@mixin text-overflow() {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/**
+  * webkit 手机横向内容滚动
+*/
+@mixin horizontal-scroll(){
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+    white-space: nowrap;
+    &::-webkit-scrollbar{
+        diaplay: none;
+    }
+}
+/**
+  * set width and height
+  * @param {Number} $width - box's width
+  * @param {Number} $height - box's height
+  */
+@mixin size($width, $height:$width) {
+  width: $width;
+  height: $height;
+}
+/**
+  * center text in vertical
+  * @param {Number} $height  -line-height
+  */
+@mixin height($height) {
+  height: $height;
+  line-height: $height;
+}
+
+@mixin font($font-size,$font-color){
+    font-size: $font-size;
+  color: $font-color;
+}
+
+/**
+  * @param {String} $layout - ['absolute','relative','fixed','block','inline','inline-block']
+  * @param {Number} $width
+  * @param {Number} $height
+  * @param {Map}  $args (left:0,top:0,right:0,bottom:0)
+  */
+@mixin pseudo($layout,$width:0, $height:0,$args:()){
+    content: "";
+    @include size($width,$height);
+    $display : block inline-block inline;
+    $position: absolute relative fixed;
+     @if index($display,$layout){
+           display: $layout;
+	   }@else if index($position,$layout){
+           position: $layout;
+     }
+
+    $offsets: top right bottom left;
+		@each $key in $offsets {
+       // All this code happens inside the loop
+       @if map-has-key($args, $key) {
+           #{$key}: map-get($args,$key);
+       }
+    }
+}
+
+/**
+  * 设置背景图片的样式
+  * param {Number} $width 图片的宽
+  * param {Number} $height 图片的高
+  * param {ulr}   $imgurl --图片地址
+  * param {String} $backgroundSize -- options{cover|contain} 背景铺开的方式
+  */
+@mixin background-img($width,$height,$imgurl,$backgroundSize){
+    @include size($width,$height);
+    background:url($imgurl) no-repeat center center;
+    @if $backgroundSize{
+       background-size: $backgroundSize;
+    }@else{
+       background-size: $width $height;
+    }
+}
+/**
+  * 引用第三方图片资源。background-image 在html中设置，其他属性通过css定义
+  */
+@mixin third-party-background(){
+    background-repeat:no-repeat;
+	background-size: cover;
+	background-position: center center;
+}
+
+/** We use this to create isosceles triangles
+  * @param {Number} $triangle-size - Used to set border-size. No default, set a px or em size.
+  * @param {Color} $triangle-color - Used to set border-color which makes up triangle. No default
+  * @param {dimension} $triangle-direction - Used to determine which direction triangle points. Options: top, bottom, left, right
+*/
+@mixin css-triangle($triangle-size, $triangle-color, $triangle-direction) {
+  content: "";
+  display: block;
+  width: 0;
+  height: 0;
+  border: inset $triangle-size;
+  @if ($triangle-direction == top) {
+    border-color: $triangle-color transparent transparent transparent;
+    border-top-style: solid;
+  }
+  @if ($triangle-direction == bottom) {
+    border-color: transparent transparent $triangle-color transparent;
+    border-bottom-style: solid;
+  }
+  @if ($triangle-direction == left) {
+    border-color: transparent transparent transparent $triangle-color;
+    border-left-style: solid;
+  }
+  @if ($triangle-direction == right) {
+    border-color: transparent $triangle-color transparent transparent;
+    border-right-style: solid;
+  }
+}
+
+// @mixins
+//
+// Makes an element visually hidden, but accessible.
+// @see http://snook.ca/archives/html_and_css/hiding-content-for-accessibility
+@mixin element-invisible {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+}
+
+
+// @mixins
+//
+// Turns off the element-invisible effect.
+@mixin element-invisible-off {
+  position: static !important;
+  height: auto;
+  width: auto;
+  overflow: visible;
+  clip: auto;
+}
+/**
+  * multi lines overflow
+  * @param {Number} $lineCount - count to display
+  */
+@mixin multiline-ellipsis($lineCount){
+    @media all and (-webkit-min-device-pixel-ratio:0){
+		&{
+		   white-space:normal;  
+		   -webkit-line-clamp:$lineCount;  
+		   display:-webkit-box;  
+		   overflow: hidden;
+		   text-overflow:ellipsis;
+		   -webkit-box-orient: vertical; 
+		}
+    }
+}
+/**
+  * to center the element in parent container
+  */
+@mixin absolute-center(){
+   	position: absolute;
+    left:50%;
+	  top:50%;
+	  transform:translate(-50%,-50%);
+}
+
+/**
+  * change placeholder style
+  */
+@mixin placeholder {
+    &::-webkit-input-placeholder {
+        @content;
+    }
+}
+/** 
+  * 已某个角落，来定位元素
+  * @param {String} $position 定位属性值
+  */
+@mixin top-left-corner($position:absolute){
+  position: $position;
+  top: 0;
+  left: 0;
+}
+@mixin top-right-corner($position:absolute){
+  position: $position;
+  top: 0;
+  right: 0;
+}
+@mixin bottom-left-corner($position:absolute){
+  position: $position;
+  bottom: 0;
+  left: 0;
+}
+@mixin bottom-right-corner($position:absolute){
+  position: $position;
+  bottom: 0;
+  right: 0;
+}
+
+
+
+/**
+  * media query
+  * @param {List} $args condition
+  * @example breakpoint(min-width 640px max-width 1024){}
+  */
+@mixin breakpoint($propertys){
+ 	$query : '';
+  @each $property in $propertys{
+    $query : $query + 'and(' + $property + ':' + map-get($property) + ')'
+  }
+  @media screen #{$query} {
+       @content;
+  }
+}
+@mixin small-phone(){
+  @include breakpoint((max-width:#{$sm2-screen-md})){
+    @content;
+  }
+}
+@mixin big-phone(){
+  @include breakpoint((min-width:#{$sm2-screen-md} ,max-width:#{$sm2-screen-lg})){
+      @content;
+  }
+}
+
+@mixin ipad(){
+  @include breakpoint((min-width:#{$sm2-screen-lg})){
+      @content;
+  }
+}
+
+/**
+  * display flex
+  */
+@mixin flex(){
+   display:-webkit-box;
+   display:flex;
+}
+/** 
+  * box-flex 1
+  */
+@mixin auto-flex($ratio:1){
+    -webkit-box-flex:$ratio;
+	flex:$ratio;
+	width:1%;
+}
+@mixin flex-center(){
+	  @include flex();
+    @include box-pack();
+	  @include box-align();
+}
+/**
+  * 水平方向上如何放置元素，与box-align 一起居中显示元素
+*/
+@mixin box-pack($pack: center) {
+// start|end|center|justify
+  -webkit-box-pack: $pack;
+  justify-content: $pack;
+}
+/**
+  * 垂直方向上如何放置元素，与box-pack 一起居中显示元素
+*/
+@mixin box-align($align: center) {
+// start|end|center|baseline|stretch
+  -webkit-box-align: $align;
+  align-items: $align;
+}
+
+@mixin box-direction($direction: normal) {
+// normal|reverse|inherit
+  -webkit-box-direction: $direction;
+  box-direction: $direction;
+}
+
+// Adds keyframes blocks for supported prefixes, removing redundant prefixes in the block's content
+/** 
+  * keyframes
+  * example @include keyframes(bounceIn){
+  *      0%{}
+  *      100%{}
+  * };
+  *
+*/
+@mixin keyframes($name) {
+		@at-root{
+        @each $prefix in $prefixes {
+			@if $prefix == webkit {
+				@-webkit-keyframes #{$name} {
+				  @content;
+				}
+			}@else if $prefix == moz {
+				@-moz-keyframes #{$name} {
+				  @content;
+				}
+			}@else if $prefix == ms{
+                @-ms-keyframes #{$name} {
+				  @content;
+				}
+			}
+		}
+		@keyframes #{$name} {
+		  @content;
+		}
+    }	
+}
+
