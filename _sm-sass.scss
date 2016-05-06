@@ -241,11 +241,11 @@ $sm2-screen-lg : 640px !default;
   * @example breakpoint(min-width 640px max-width 1024){}
   */
 @mixin breakpoint($propertys){
- 	$query : '';
+ 	$query : 'screen';
   @each $property in $propertys{
     $query : $query + 'and(' + $property + ':' + map-get($property) + ')'
   }
-  @media screen #{$query} {
+  @media  #{$query}{
        @content;
   }
 }
@@ -285,6 +285,14 @@ $sm2-screen-lg : 640px !default;
 	  @include flex();
     @include box-pack();
 	  @include box-align();
+}
+@mixin flex-direction($direction){
+    flex-direction: $direction;
+    @if $direction == row{
+        -webkit-box-orient: horizontal;
+    }@else if $direction == column {
+         -webkit-box-orient: vertical;
+    }
 }
 /**
   * 水平方向上如何放置元素，与box-align 一起居中显示元素
